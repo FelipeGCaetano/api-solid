@@ -1,0 +1,29 @@
+- Iniciar um projeto
+npm init -y
+
+- Dependencias
+npm i typescript @types/node tsx tsup -D
+
+- Criar tsconfig
+npx tsc --init
+
+- Em tsconfig.json
+"target": "es2020"
+
+- Em package.json
+"scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node build/server.js",
+    "build": "tsup src --out-dir build"
+},
+
+- Criar o arquivo .npmrc na raiz para definir versões das dependencias, conteudo:
+save-exact=true
+
+- Eslint
+npm i eslint @rocketseat/eslint-config -D
+
+ou
+
+npm i eslint -D
+npx eslint --init // E configurar
