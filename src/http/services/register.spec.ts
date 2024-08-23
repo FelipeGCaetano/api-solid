@@ -1,15 +1,20 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { RegisterUser } from './register'
 import { compare } from 'bcryptjs'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 
-describe('Register use case', () => {
-  it('should be able to register', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const registerUser = new RegisterUser(usersRepository)
+let usersRepository: InMemoryUsersRepository
+let sut: RegisterUser
 
-    const { user } = await registerUser.execute({
+describe('Register use case', () => {
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository()
+    sut = new RegisterUser(usersRepository)
+  })
+
+  it('should be able to register', async () => {
+    const { user } = await sut.execute({
       name: 'Teste',
       email: 'teste@teste.com',
       password: '123456',
@@ -19,10 +24,7 @@ describe('Register use case', () => {
   })
 
   it('should hash user password upon registration', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const registerUser = new RegisterUser(usersRepository)
-
-    const { user } = await registerUser.execute({
+    const { user } = await sut.execute({
       name: 'Teste',
       email: 'felipe@gmail.com',
       password: '123456',
@@ -34,19 +36,16 @@ describe('Register use case', () => {
   })
 
   it('should not be able to registre with same email twice', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const registerUser = new RegisterUser(usersRepository)
-
     const email = 'teste@teste.com'
 
-    await registerUser.execute({
+    await sut.execute({
       name: 'Teste',
       email,
       password: '123456',
     })
 
     await expect(() =>
-      registerUser.execute({
+      sut.execute({
         name: 'Teste',
         email,
         password: '123456',
